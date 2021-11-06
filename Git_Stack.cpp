@@ -5,7 +5,7 @@ template <typename ty>
 // class Stack
 class Stack
 {
-
+   
     // private fields
 private:
     ty* stack;
@@ -16,10 +16,7 @@ private:
     // public methods
 public:
     // constructor
-    Stack() {
-        size = 100;
-        stack = new ty[100];
-    }
+    
     Stack(int n)
     {
         size = n;
@@ -35,6 +32,7 @@ public:
             std::cout << "Stack Overflow!" << endl;
         }
     }
+
 
     // pop method to remove and return top most element from the stack
     ty pop() {
