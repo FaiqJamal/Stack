@@ -82,3 +82,54 @@ public:
         return '0';
     }
 }; //stack class ends here
+//a function to check validity of the expression entered
+bool validityCheck(string expression)
+{
+    bool valid = true; //bbolean variable
+    Stack <char> stack1(expression.length()); //creating object
+    // for loop to traverse over the expression string
+    for (int i = 0; i < expression.length(); i++)
+    { // for loop starts
+        // check for opening brackets
+        if (expression[i] == '(' || expression[i] == '{' || expression[i] == '[')
+        { // first if starts
+            stack1.push(expression[i]);
+            continue;
+        } // first if ends
+        // check for closing brackets
+        else if (expression[i] == ')' || expression[i] == '}' || expression[i] == ']')
+        {
+            char OpeningToken = ' '; 
+            //using switch case to check opening and closing of brackets
+            switch (expression[i]) // assign appropriate opening bracket
+            {
+            
+            case ')':
+                OpeningToken = '(';
+                break;
+            case '}':
+                OpeningToken = '{';
+                break;
+            case ']':
+                OpeningToken = '[';
+                break;
+            }
+            if (OpeningToken == stack1.Peak()) //if character token matches the character at the peak of stack, pop it out
+            {
+                stack1.pop();
+            }
+            else
+            {
+                //esle validity is set to false
+                valid = false;
+                break;
+            }
+        }
+    }
+    if (!stack1.isEmpty())
+    {
+        valid = false;
+    }
+
+    return valid; //returns bool 
+}
