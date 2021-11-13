@@ -224,3 +224,100 @@ string InfixToPostfix(string expression) {
     }
     return postfix; //return the string expression
 }//function ends here
+
+//function that returns a double after the expression passed in the argument is evaluated
+double evaluate(string expression) {
+    int i; //variable to be used in loop
+    Stack <double> values(expression.length()); //stack object double type that stores numeric values
+    Stack <char> ops(expression.length());//  //stack object character type that stores operators
+    //for loop iterates over whole expression
+    for ( i = 0; i < expression.length(); i++) {
+        if (expression[i] == ' ') //if a space is detected, then continue
+            continue;
+        //if the character is an opening bracket push it into operators stack
+        else if (expression[i] == '(') {
+            ops.push(expression[i]);
+        }
+        //if the character is a digit
+        else if (isdigit(expression[i])) {
+            double val = 0;
+            while (i < expression.length() && isdigit(expression[i]))
+            {
+                val = (val * 10) + (expression[i] - double('0'));
+                i++;
+            }
+            //push the existing value into values stack
+            values.push(val);
+            i--;
+        }
+
+        // if closing bracket is detected, perform the operation using operation function
+        else if (expression[i] == ')')
+        {
+            while (!ops.isEmpty() && ops.Peak() != '(')
+            {
+                double val2 = values.Peak();
+                values.pop();
+                double val1 = values.Peak();
+                values.pop();
+                char op = ops.Peak();
+                ops.pop();
+                values.push(operation(val1, val2, op));
+            }
+
+            // pop opening brace till stacket is empty
+            if (!ops.isEmpty())
+                ops.pop();
+        }
+        // Current character is an operator.
+        else
+        {
+            // While operator stack is not empty and its top possess equal or greater precedence to current operator
+            //perform the operation between two consecutive values at the top of value stack
+            while (!ops.isEmpty() && precidence(ops.Peak())
+                >= precidence(expression[i])) {
+                double val2 = values.Peak();
+                values.pop();
+                double val1 = values.Peak();
+                values.pop();
+                char op = ops.Peak();
+                ops.pop();
+                values.push(operation(val1, val2, op));
+            }
+
+            // Push current character operator to operator stacks.
+            ops.push(expression[i]);
+        }
+    }
+
+    // This while loop applies operation between the two consecutive values at the top of the of the values stack
+    while (!ops.isEmpty()) {
+        double val2 = values.Peak();
+        values.pop();
+        double val1 = values.Peak();
+        values.pop();
+        char op = ops.Peak();
+        ops.pop();
+        values.push(operation(val1, val2, op));
+    }
+    return values.Peak(); //at last returns the finalize value at the top of values stack
+} //function ends here
+
+
+//creating main function
+int main() {
+    cout << "Enter an infix expression to be converted to postfix \n";
+    cout<< "(Expression must have a space if two digit or more number is entered)\n";
+    string expression; //variable that stores user entered expression
+    cout << "Infix Expression: ";
+    getline(cin, expression); //using getline to take user input expression so that spaces are read
+    if (validityCheck(expression))//checks if the expression is valid (as in balanced braces)
+    {
+        cout << "\nPostfix expression: " << InfixToPostfix(expression); //displaying the converted expression using concerned function
+        cout << "\nValue of expression = " << evaluate(expression); //displaying the value of expression using concerned function
+    }
+    else { //else displaying that expression is invalid
+        cout << "\nThe entered infix expression is invalid";
+    }
+    return 0;
+} //main ends here
