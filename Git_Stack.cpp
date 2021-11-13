@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <cstdio>
+#include <cstdlib>
 using namespace std;
 template <typename ty> //using template to implement array based stacks functionlaity
 // class Stack
@@ -133,3 +135,92 @@ bool validityCheck(string expression)
 
     return valid; //returns bool 
 }
+//function to perform operations while evaluating the expression
+double operation(double a, double b, char op) {
+    //using switch case 
+    switch (op)
+    {
+    case '+':
+        return a + b;
+    case '-':
+        return a - b;
+    case '*':
+        return a * b;
+    case '/':
+        return a / b;
+    default:
+        return 0;
+    }
+} //function ends here
+
+//function that sets the precidence of the operators
+int precidence(char character) {
+    //^ is set with with higher precidence i.e. followed by / and *, + and -
+    char currentchar = character;
+    switch (currentchar) {
+    case '^':
+        return 3;
+        break;
+    case '/':
+        return 2;
+        break;
+    case '*':
+        return 2;
+        break;
+    case '+':
+        return 1;
+        break;
+    case '-':
+        return 1;
+        break;
+    default:
+        return -1;
+        break;
+    }
+} //function ends here
+
+//function that returns a string which is postfix form of a infix
+string InfixToPostfix(string expression) {
+    string postfix = ""; //an empty string variable
+    Stack <char> stack; //creating character type stack object
+    //using enhanced for loop to iterate over the entered expression
+    for (char characters : expression) {
+        if (!isdigit(characters)) { //checking if character is not a digit
+            if (characters == '(') { //if it is an opening bracket
+                stack.push(characters); //push it into the stack
+            }
+            else if (characters == ')') { //if it is closing match bracket
+                while (!stack.isEmpty() && stack.Peak() != '(') { //add the peak character to the expression till stack is not empty and new opening bracket is not detected
+                    postfix += stack.Peak();
+                    stack.pop(); //pop after each peak is added
+                }
+                stack.pop();
+            }
+            else if (characters == ' ') { //if a space is detected in case of more than one digit case
+                postfix += characters; //add the space in the expression and continue the loop
+                continue;
+            }
+            else {
+                //updating the expression based on the precedence of top at the stack and current character in loop
+                while (!stack.isEmpty() && precidence(characters) <= precidence(stack.Peak())) {
+                    postfix += stack.Peak();
+                    stack.pop();
+
+                }
+                stack.push(characters);
+
+            }
+        }
+        else {
+            //else a character is a digit as well, add  it into the expression
+            postfix += characters;
+        }
+
+    }
+    //while stack is not empty add the characters in top of the stack to the expression and pop it once 
+    while (!stack.isEmpty()) {
+        postfix += stack.Peak();
+        stack.pop();
+    }
+    return postfix; //return the string expression
+}//function ends here
